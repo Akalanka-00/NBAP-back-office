@@ -1,23 +1,33 @@
 package com.nexusbit.apiportal.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-@Data
+import lombok.*;
+
+import java.util.Date;
+
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
+@Data
 @Entity
-@Table(name = "User_Table")
+@Table(name = "users")
+
 public class UserModel {
 
     @Id
-    @GeneratedValue
-    @Column(name = "Id")
-    private long userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
     private String fname;
     private String lname;
+
+    @Column(unique = true)
     private String email;
-    private String userType;
-    private String status;
+    private String password;
+    private String status;  //active, pending, restricted
+    private Date createdAt;
+    private Date roleExpDate;
+
+    @ManyToOne
+    @JoinColumn(name = "role")
+    private RoleModel role;    //admin, standard or premium user
 }
