@@ -40,6 +40,50 @@ CREATE TABLE  `api-portal`.`user_activities` (
   FOREIGN KEY (`user_id`) REFERENCES users(id)
 );
 
+CREATE TABLE  `api-portal`.`media` (
+	`id` VARCHAR(36) NOT NULL,
+	`url` LONGTEXT NOT NULL,
+	`created_at` datetime(6) DEFAULT NULL,
+
+	PRIMARY KEY (`id`)
+);
+
+CREATE TABLE  `api-portal`.`projects` (
+	`id` VARCHAR(36) NOT NULL,
+    `name` VARCHAR(255) NOT NULL,
+    `banner` VARCHAR(36) NULL,
+	`start_date` datetime(6) DEFAULT NULL,
+	`end_date` datetime(6) DEFAULT NULL,
+    `description` VARCHAR(1000) NOT NULL,
+    `is_ongoing` tinyint,
+    `can_rate` tinyint,
+    `is_private` tinyint,
+	`created_by` INT,
+	`created_at` datetime(6) DEFAULT NULL,
+
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (`banner`) REFERENCES media(id),
+	FOREIGN KEY (`created_by`) REFERENCES users(id)
+);
+
+CREATE TABLE  `api-portal`.`project_media` (
+	`id` INT NOT NULL AUTO_INCREMENT,
+	`project_id` VARCHAR(36) NOT NULL,
+	`media_id` VARCHAR(36) NOT NULL,
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (`project_id`) REFERENCES projects(id),
+	FOREIGN KEY (`media_id`) REFERENCES media(id)
+);
+
+CREATE TABLE  `api-portal`.`reference_urls` (
+	`id` VARCHAR(36) NOT NULL,
+	`project_id` VARCHAR(36) NOT NULL,
+	`hostname` VARCHAR(255)NOT NULL,
+	`url` VARCHAR(255)NOT NULL,
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (`project_id`) REFERENCES projects(id)
+);
+
 DELIMITER $$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getUserAuthorities`(IN userEmail VARCHAR(255))
@@ -77,5 +121,5 @@ Insert into `authorities` (`role`, `authority`) VALUES ('public', 'view_projects
 Insert into `authorities` (`role`, `authority`) VALUES ('public', 'view_qualifications');
 
 Insert into `users` (`created_at`, `email`, `fname`, `lname`, `password`, `role`, `status`, `role_exp_date` ) VALUES (NOW(), 'shenalakalanka513@gmail.com', 'Shenal', 'Akalanka', '$2a$12$HqOxY5e1J6gB140dje83gu82rEVyy/5ofwOcb5SpzDbTc/3SCYNf6', 'admin', 'approved', NULL);
-Insert into `users` (`created_at`, `email`, `fname`, `lname`, `password`, `role`, `status`, `role_exp_date` ) VALUES (NOW(), 'standard@gmail.com', 'Test', 'User', '$2a$12$HqOxY5e1J6gB140dje83gu82rEVyy/5ofwOcb5SpzDbTc/3SCYNf6', 'standard', 'approved', NULL);
-Insert into `users` (`created_at`, `email`, `fname`, `lname`, `password`, `role`, `status`, `role_exp_date` ) VALUES (NOW(), 'premium@gmail.com', 'Shenal', 'Akalanka', '$2a$12$HqOxY5e1J6gB140dje83gu82rEVyy/5ofwOcb5SpzDbTc/3SCYNf6', 'premium', 'approved', NOW());
+Insert into `users` (`created_at`, `email`, `fname`, `lname`, `password`, `role`, `status`, `role_exp_date` ) VALUES (NOW(), 'standard@gmail.com', 'standard', 'User', '$2a$12$HqOxY5e1J6gB140dje83gu82rEVyy/5ofwOcb5SpzDbTc/3SCYNf6', 'standard', 'approved', NULL);
+Insert into `users` (`created_at`, `email`, `fname`, `lname`, `password`, `role`, `status`, `role_exp_date` ) VALUES (NOW(), 'premium@gmail.com', 'premium', 'User', '$2a$12$HqOxY5e1J6gB140dje83gu82rEVyy/5ofwOcb5SpzDbTc/3SCYNf6', 'premium', 'approved', NOW());

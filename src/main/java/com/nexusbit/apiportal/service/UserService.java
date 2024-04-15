@@ -3,8 +3,8 @@ package com.nexusbit.apiportal.service;
 import com.nexusbit.apiportal.constants.enums.USER_STATUS;
 import com.nexusbit.apiportal.constants.enums.USER_TYPES;
 import com.nexusbit.apiportal.dto.ErrorResponse;
-import com.nexusbit.apiportal.dto.UserRequest;
-import com.nexusbit.apiportal.dto.UserResponse;
+import com.nexusbit.apiportal.dto.user.UserRequest;
+import com.nexusbit.apiportal.dto.user.UserResponse;
 import com.nexusbit.apiportal.model.RoleModel;
 import com.nexusbit.apiportal.model.UserModel;
 import com.nexusbit.apiportal.repository.UserRepo;
@@ -15,16 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.*;
 

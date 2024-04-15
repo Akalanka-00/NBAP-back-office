@@ -64,7 +64,8 @@ public class SecurityConfig {
                 .addFilterAfter(new JwtTokenGeneratorFilter(), BasicAuthenticationFilter.class)
                 .addFilterBefore(new JwtTokenValidatorFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/secure/**").hasAuthority("handle_projects")
+                        // .requestMatchers("/secure/**").hasAuthority("handle_projects")
+                         .requestMatchers("/secure/**").authenticated()
                         .requestMatchers("/auth/user/register").permitAll()
                         .requestMatchers("/auth/user/login").authenticated()
                 )

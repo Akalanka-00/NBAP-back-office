@@ -1,4 +1,4 @@
-package com.nexusbit.apiportal.dto;
+package com.nexusbit.apiportal.dto.user;
 
 import com.nexusbit.apiportal.model.RoleModel;
 import lombok.AllArgsConstructor;

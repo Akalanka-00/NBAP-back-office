@@ -1,6 +1,6 @@
 package com.nexusbit.apiportal.controller;
 
-import com.nexusbit.apiportal.dto.UserRequest;
+import com.nexusbit.apiportal.dto.user.UserRequest;
 import com.nexusbit.apiportal.service.UserService;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;

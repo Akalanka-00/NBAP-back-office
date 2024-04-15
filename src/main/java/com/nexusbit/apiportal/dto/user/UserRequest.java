@@ -1,4 +1,4 @@
-package com.nexusbit.apiportal.dto;
+package com.nexusbit.apiportal.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
