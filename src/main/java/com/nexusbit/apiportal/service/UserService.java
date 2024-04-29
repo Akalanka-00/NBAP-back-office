@@ -77,7 +77,6 @@ public class UserService {
 
     public ResponseEntity<?> loginUser(Authentication authentication, String token) {
 
-        System.out.println(token);
         String[] credentials = new String(Base64.getDecoder().decode(token.split(" ")[1])).split(":");
 
         ResponseEntity<?> response = null;

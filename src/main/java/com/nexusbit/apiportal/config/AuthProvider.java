@@ -41,7 +41,6 @@ public class AuthProvider implements AuthenticationProvider {
 
         if (users.size()>0) {
             List<String> authorities = userRepo.getAuthorities(email);
-            System.out.println(authorities);
             if (passwordEncoder.matches(password, users.get(0).getPassword())) {
                 return new UsernamePasswordAuthenticationToken(email, users.get(0).getPassword(), getGrantedAuthorities(authorities));
             } else {

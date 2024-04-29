@@ -15,7 +15,7 @@ CREATE TABLE `api-portal`.`authorities` (
   PRIMARY KEY (`id`),
   FOREIGN KEY (`role`) REFERENCES roles(role));
   
-CREATE TABLE `users` (
+CREATE TABLE `api-portal`.`users` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `created_at` datetime(6) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
@@ -82,6 +82,44 @@ CREATE TABLE  `api-portal`.`reference_urls` (
 	`url` VARCHAR(255)NOT NULL,
 	PRIMARY KEY (`id`),
 	FOREIGN KEY (`project_id`) REFERENCES projects(id)
+);
+
+CREATE TABLE  `api-portal`.`experience` (
+	`id` INT NOT NULL AUTO_INCREMENT,
+	`user_id` INT NOT NULL,
+    `title` VARCHAR(36) NOT NULL,
+    `emp_type` VARCHAR(36) NOT NULL,
+    `company` VARCHAR(100) NOT NULL,
+    `location_type` VARCHAR(36) NOT NULL,
+    `start_month` INT NOT NULL,
+    `start_year` INT NOT NULL,
+    `end_month` INT NOT NULL,
+    `end_year` INT NOT NULL,
+    `currently_working` tinyint,
+    `is_private` tinyint,
+	`created_at` datetime(6) DEFAULT NULL,
+
+	PRIMARY KEY (`id`),
+	FOREIGN KEY (`user_id`) REFERENCES users(id)
+);
+
+CREATE TABLE  `api-portal`.`education` (
+	`id` INT NOT NULL AUTO_INCREMENT,
+	`user_id` INT NOT NULL,
+    `school` VARCHAR(255) NOT NULL,
+    `degree` VARCHAR(255) NOT NULL,
+	`field` VARCHAR(255) NOT NULL,
+	`start_month` INT NOT NULL,
+    `start_year` INT NOT NULL,
+    `end_month` INT NOT NULL,
+    `end_year` INT NOT NULL,
+    `grade` VARCHAR(36) NOT NULL,
+    `is_private` tinyint,
+    `activities` VARCHAR(1000) NOT NULL,
+	`created_at` datetime(6) DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+	FOREIGN KEY (`user_id`) REFERENCES users(id)
 );
 
 DELIMITER $$

@@ -13,8 +13,8 @@ public interface UserRepo extends JpaRepository<UserModel, Long> {
 
     List<UserModel> findByEmail(String email);
 
-//    @Query(value = "SELECT a.authority FROM authorities a INNER JOIN roles r ON a.role = r.role INNER JOIN users u ON r.role = u.role WHERE u.email = :userEmail", nativeQuery = true)
+    @Query(value = "SELECT a.authority FROM authorities a INNER JOIN roles r ON a.role = r.role INNER JOIN users u ON r.role = u.role WHERE u.email = :userEmail", nativeQuery = true)
 
-    @Query(value = "CALL getUserAuthorities(:userEmail);", nativeQuery = true)
+    //@Query(value = "CALL getUserAuthorities(:userEmail);", nativeQuery = true)
     List<String> getAuthorities(@Param("userEmail") String userEmail);
 }

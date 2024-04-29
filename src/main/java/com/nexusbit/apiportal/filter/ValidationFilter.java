@@ -40,7 +40,6 @@ public class ValidationFilter implements Filter {
 
         String header = req.getHeader(AUTHORIZATION);
         String role = req.getHeader("role");
-        System.out.println(role);
 
         if (header != null) {
             header = header.trim();
@@ -71,7 +70,6 @@ public class ValidationFilter implements Filter {
 
                     if (roleDelim == -1) {
                         res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                        System.out.println("decoded "+decodedRole);
                         logger.error("Invalid role authentication token!. userValidation()");
                         return;
 
