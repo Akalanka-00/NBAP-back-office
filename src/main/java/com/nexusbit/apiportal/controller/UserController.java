@@ -24,13 +24,13 @@ public class UserController {
         System.out.println(value);
     }
 
-//    @PostMapping("/register")
-//    public ResponseEntity<?> registerUser(HttpServletRequest servletRequest, @RequestBody UserRequest request){
-//        return userService.registerUser(request);
-//    }
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(HttpServletRequest servletRequest, @RequestBody UserRequest request){
+        return userService.registerUser(request);
+    }
 
-//    @RequestMapping("/login")
-//    public ResponseEntity<?> loginUser(Authentication authentication, @RequestHeader("authorization") String authorization){
-//         userService.loginUser(authentication, authorization);
-//    }
+    @RequestMapping("/login")
+    public ResponseEntity<?> loginUser(Authentication authentication, @RequestHeader("authorization") String authorization){
+        return userService.loginUser(authentication, authorization);
+    }
 }

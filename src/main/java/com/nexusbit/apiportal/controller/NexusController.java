@@ -25,8 +25,8 @@ public class NexusController <T>{
     }
 
     @PostMapping("/public")
-    public ResponseModel publicRequest(Authentication authentication, @RequestBody String data,  @RequestHeader("authorization") String authorization) throws JsonProcessingException {
-        return portalRequestProcessor.processPublicRequest(authentication, data, authorization);
+    public ResponseModel publicRequest(Authentication authentication, @RequestBody String data) throws JsonProcessingException {
+        return portalRequestProcessor.processPublicRequest(authentication, data);
     }
 
 }

@@ -83,7 +83,7 @@ public class PortalRequestProcessor{
 
     }
 
-    public ResponseModel  processPublicRequest(Authentication authentication, String json, String authorization) throws JsonProcessingException {
+    public ResponseModel  processPublicRequest(Authentication authentication, String json) throws JsonProcessingException {
 
         ObjectMapper mapper = new ObjectMapper();
         RequestModel request = mapper.readValue(json, RequestModel.class);
@@ -118,13 +118,10 @@ public class PortalRequestProcessor{
                 AUTHENTICATION_MSG_TYPE MSG_TYP = AUTHENTICATION_MSG_TYPE.values()[header.getMSG_TYP()];
                 switch (MSG_TYP) {
                     case LOGIN:
-                        ResponseBodyModel body = userService.loginUser(authentication, authorization);
-                        response.setBody(body);
-                        return response;
+                        break;
+
                     case REGISTER:
-                        UserRequest userRequest = mapper.readValue(jsonData, UserRequest.class);
-                        response.setBody(userService.registerUser(userRequest));
-                        return response;
+                        break;
 
                     case RESET:
                         // Reset logic
