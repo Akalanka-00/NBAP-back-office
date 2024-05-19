@@ -7,12 +7,15 @@ import com.nexusbit.apiportal.model.MediaModel;
 import com.nexusbit.apiportal.model.ProjectMediaModel;
 import com.nexusbit.apiportal.model.ProjectModel;
 import com.nexusbit.apiportal.model.ReferenceUrlsModel;
+import com.nexusbit.apiportal.model.nexusModels.ResponseBody;
+import com.nexusbit.apiportal.model.nexusModels.errModel.ErrorData;
 import com.nexusbit.apiportal.repository.*;
 import com.nexusbit.apiportal.utils.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -34,8 +37,8 @@ public class ProjectService {
     private final UserRepo userRepo;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public ResponseEntity<?> newProject(Authentication authentication, ProjectRequest request)  {
-        ResponseEntity<?> response = null;
+    public ResponseBody newProject(Authentication authentication, ProjectRequest request)  {
+        ResponseBody response = null;
         try {
             ProjectModel project = ProjectModel.builder()
                     .name(request.getName())
@@ -84,12 +87,13 @@ public class ProjectService {
             }
 
 
-            response = ResponseEntity.status(201).body(savedProject);
+            response = ResponseBody.builder().msg("Project creation successful").data(savedProject).build();
 
 
         }catch (Exception e){
             logger.error("Project save failed!. "+e.getMessage()+" newProject()");
-            response = ResponseEntity.status(500).body(e.getMessage());
+            response = ResponseBody.builder().msg("Error Occurred").data(ErrorData.builder().ERR_MSG(e.getMessage()).ERR_CODE(HttpStatus.INTERNAL_SERVER_ERROR)).build();
+
 
 
         }

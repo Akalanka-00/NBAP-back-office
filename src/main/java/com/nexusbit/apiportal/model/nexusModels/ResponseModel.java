@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class ResponseModel {
 
     private ResponseHeader header;
-    private ResponseBodyModel body;
+    private ResponseBody body;
 }

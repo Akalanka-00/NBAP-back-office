@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 public class NexusController <T>{
@@ -20,7 +22,7 @@ public class NexusController <T>{
     private final PortalRequestProcessor portalRequestProcessor;
 
     @PostMapping("/secure")
-    public ResponseModel secureRequest(Authentication authentication, @RequestBody String data) throws JsonProcessingException {
+    public ResponseModel secureRequest(Authentication authentication, @RequestBody String data) throws IOException {
         return portalRequestProcessor.processSecureRequest(authentication, data);
     }
 

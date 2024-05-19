@@ -20,10 +20,10 @@ public class ProjectController {
         return service.retrieveProjects(authentication);
     }
 
-    @PostMapping("/new")
-    public ResponseEntity<?> newProject(Authentication authentication, @RequestBody ProjectRequest request){
-        return service.newProject(authentication, request);
-    }
+//    @PostMapping("/new")
+//    public ResponseEntity<?> newProject(Authentication authentication, @RequestBody ProjectRequest request){
+//        return service.newProject(authentication, request);
+//    }
 
     @GetMapping("/view/{id}")
     public ResponseEntity<?> viewProject(Authentication authentication, @PathVariable String id){

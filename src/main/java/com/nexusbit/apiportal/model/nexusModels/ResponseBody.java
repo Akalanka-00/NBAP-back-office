@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Data
-public class ResponseBodyModel {
+public class ResponseBody {
 
     private String msg;
     private Object data;

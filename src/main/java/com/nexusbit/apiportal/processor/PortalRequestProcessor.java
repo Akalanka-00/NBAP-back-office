@@ -1,25 +1,32 @@
 package com.nexusbit.apiportal.processor;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nexusbit.apiportal.constants.enums.request.AUTHENTICATION_MSG_TYPE;
+import com.nexusbit.apiportal.constants.enums.request.PROJECT_MSG_TYPE;
 import com.nexusbit.apiportal.constants.enums.request.REQUEST_GROUP;
+import com.nexusbit.apiportal.dto.project.ProjectRequest;
 import com.nexusbit.apiportal.dto.user.UserRequest;
 import com.nexusbit.apiportal.model.nexusModels.*;
 import com.nexusbit.apiportal.model.nexusModels.errModel.ErrorData;
+import com.nexusbit.apiportal.service.ProjectService;
 import com.nexusbit.apiportal.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 @Service
 @RequiredArgsConstructor
 public class PortalRequestProcessor{
 
     private  final UserService userService;
+    private final ProjectService projectService;
 
-    public ResponseModel  processSecureRequest(Authentication authentication, String json) throws JsonProcessingException {
+    public ResponseModel  processSecureRequest(Authentication authentication, String json) throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();
         RequestModel request = mapper.readValue(json, RequestModel.class);
@@ -35,7 +42,7 @@ public class PortalRequestProcessor{
         ResponseModel notFoundResponse = ResponseModel.builder()
                 .header(responseHeader)
                 .body(
-                        ResponseBodyModel.builder()
+                        ResponseBody.builder()
                                 .msg("Not Found")
                                 .data(ErrorData.builder()
                                         .ERR_CODE(HttpStatus.NOT_FOUND)
@@ -70,7 +77,35 @@ public class PortalRequestProcessor{
 
                 break;
             case PROJECT:
-                // Project logic
+                PROJECT_MSG_TYPE projectMsgType = PROJECT_MSG_TYPE.values()[header.getMSG_TYP()];
+                switch (projectMsgType) {
+                    case CREATE:
+                        // Create logic
+                        String data = mapper.writeValueAsString(request.getData());
+                        ProjectRequest projectRequest = mapper.readValue(data, ProjectRequest.class);
+                         response.setBody(projectService.newProject(authentication, projectRequest));
+                         return response;
+                    case UPDATE:
+                        // Update logic
+                        break;
+                    case DELETE:
+                        // Delete logic
+                        break;
+                    case VIEW_ALL_ON_PORTAL:
+                        // View all on portal logic
+                        break;
+                    case VIEW_ON_PORTAL:
+                        // View on portal logic
+                        break;
+                    case VIEW_ALL_ON_API:
+                        // View all on api logic
+                        break;
+                    case VIEW_ON_API:
+                        // View on api logic
+                        break;
+                    default:
+                        return notFoundResponse;
+                }
                 break;
             case QUALIFICATION:
                 // Qualification logic
@@ -99,7 +134,7 @@ public class PortalRequestProcessor{
         ResponseModel notFoundResponse = ResponseModel.builder()
                 .header(responseHeader)
                 .body(
-                        ResponseBodyModel.builder()
+                        ResponseBody.builder()
                                 .msg("Not Found")
                                 .data(ErrorData.builder()
                                         .ERR_CODE(HttpStatus.NOT_FOUND)

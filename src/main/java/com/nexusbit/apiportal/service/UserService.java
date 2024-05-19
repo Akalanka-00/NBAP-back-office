@@ -7,6 +7,7 @@ import com.nexusbit.apiportal.dto.user.UserRequest;
 import com.nexusbit.apiportal.dto.user.UserResponse;
 import com.nexusbit.apiportal.model.RoleModel;
 import com.nexusbit.apiportal.model.UserModel;
+import com.nexusbit.apiportal.model.nexusModels.ResponseBody;
 import com.nexusbit.apiportal.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
