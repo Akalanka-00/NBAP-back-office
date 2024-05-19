@@ -61,7 +61,9 @@ public class JwtTokenValidatorFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        List<String> paths = List.of("/auth/user/login", "/auth/user/register");
+//        List<String> paths = List.of("/auth/user/login", "/auth/user/register");
+        List<String> paths = List.of( "/public");
+
         for( String path : paths){
             if(request.getServletPath().equals(path)){
                 return true;

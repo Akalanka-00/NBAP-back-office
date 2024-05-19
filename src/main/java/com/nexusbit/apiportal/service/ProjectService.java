@@ -39,7 +39,7 @@ public class ProjectService {
         try {
             ProjectModel project = ProjectModel.builder()
                     .name(request.getName())
-                    .banner(mediaRepo.save(MediaModel.builder().url(fileService.save(request.getBanner(), authentication.getName(), MEDIA_CATEGORY.BANNER.name())).createdAt(new Date()).build()))
+                    .banner(mediaRepo.save(MediaModel.builder().url(fileService.save(request.getBanner(), authentication.getName(), MEDIA_CATEGORY.BANNER  .name())).createdAt(new Date()).build()))
                     .startDate(request.getStartDate())
                     .endDate(request.getEndDate())
                     .description(request.getDescription())

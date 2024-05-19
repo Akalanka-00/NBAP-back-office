@@ -7,6 +7,8 @@ import com.nexusbit.apiportal.dto.user.UserRequest;
 import com.nexusbit.apiportal.dto.user.UserResponse;
 import com.nexusbit.apiportal.model.RoleModel;
 import com.nexusbit.apiportal.model.UserModel;
+import com.nexusbit.apiportal.model.nexusModels.ResponseBodyModel;
+import com.nexusbit.apiportal.model.nexusModels.errModel.ErrorData;
 import com.nexusbit.apiportal.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,14 +32,14 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
 
-    public ResponseEntity<?> registerUser(UserRequest request) {
+    public ResponseBodyModel registerUser(UserRequest request) {
 
-        ResponseEntity<?> response = null;
+        ResponseBodyModel response = null;
 
         List<UserModel> users = userRepo.findByEmail(request.getEmail());
         if (users.size() > 0) {
             logger.error("User already exists!. registerUser()");
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(ErrorResponse.builder().title("Error Occurred").error("User already exists").build());
+            response = ResponseBodyModel.builder().msg("Error Occurred").data(ErrorData.builder().ERR_CODE(HttpStatus.CONFLICT).ERR_MSG("User already exists")).build();
         }
 
         try {
@@ -65,21 +67,23 @@ public class UserService {
             logger.trace("User registration success!. registerUser()");
             System.out.println("user saved");
 
-            response = ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
+            response = ResponseBodyModel.builder().msg("New User Created").data(ErrorData.builder().ERR_CODE(HttpStatus.CREATED).ERR_MSG("New User created successfully!")).build();
+
 
         } catch (Exception e) {
             logger.error("User registration failed!. registerUser()");
-            response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            response = ResponseBodyModel.builder().msg("Error occurred").data(ErrorData.builder().ERR_CODE(HttpStatus.INTERNAL_SERVER_ERROR).ERR_MSG(e.getMessage())).build();
+
         }
 
         return response;
     }
 
-    public ResponseEntity<?> loginUser(Authentication authentication, String token) {
+    public ResponseBodyModel loginUser(Authentication authentication, String token) {
 
         String[] credentials = new String(Base64.getDecoder().decode(token.split(" ")[1])).split(":");
 
-        ResponseEntity<?> response = null;
+        ResponseBodyModel response = null;
         try {
             List<UserModel> users = userRepo.findByEmail(authentication.getName());
             if (users.size() > 0) {
@@ -89,25 +93,25 @@ public class UserService {
                             .fname(users.get(0).getFname())
                             .lname(users.get(0).getLname())
                             .email(users.get(0).getEmail())
-//                            .password(users.get(0).getPassword())
                             .status(users.get(0).getStatus())
                             .createdAt(users.get(0).getCreatedAt())
                             .role(users.get(0).getRole())
                             .roleExpDate(users.get(0).getRoleExpDate())
                             .build();
                     logger.trace("User login success!. loginUser()");
-                    response = ResponseEntity.status(HttpStatus.OK).body(userResponse);
+                    response = ResponseBodyModel.builder().msg("login successful").data(userResponse).build();
+
                 } else {
                     logger.error("User login failed!. loginUser()");
-                    response = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorResponse.builder().title("Unauthorized").error("Invalid username or password").build());
+                    response = ResponseBodyModel.builder().msg("Unauthorized").data(ErrorData.builder().ERR_CODE(HttpStatus.UNAUTHORIZED).ERR_MSG("Invalid username or password")).build();
                 }
             } else {
                 logger.error("User not found!. loginUser()");
-                response = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorResponse.builder().title("Unauthorized").error("Invalid username or password").build());
+                response = ResponseBodyModel.builder().msg("Unauthorized").data(ErrorData.builder().ERR_CODE(HttpStatus.UNAUTHORIZED).ERR_MSG("Invalid username or password")).build();
             }
         } catch (Exception e) {
             logger.error("User login failed!. loginUser() " + e.getMessage());
-            response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.builder().title("Internal Server Error").error(e.getMessage()).build());
+            response = ResponseBodyModel.builder().msg("Internal Server Error").data(ErrorData.builder().ERR_CODE(HttpStatus.INTERNAL_SERVER_ERROR).ERR_MSG(e.getMessage())).build();
         }
         return response;
     }

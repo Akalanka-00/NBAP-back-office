@@ -50,7 +50,7 @@ public class JwtTokenGeneratorFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        List<String> paths = List.of( "/auth/user/register");
+        List<String> paths = List.of( "/auth/user/register", "/public");
         for( String path : paths){
             if(request.getServletPath().equals(path)){
                 return true;
