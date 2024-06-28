@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Data
-public class ResponseModel {
+public class Request {
 
-    private ResponseHeader header;
-    private ResponseBody body;
+    private RequestHeader header;
+    private Object data;
 }
