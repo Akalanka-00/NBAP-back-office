@@ -33,7 +33,7 @@ public class ProjectProcessor {
             case CREATE:
                 String data = mapper.writeValueAsString(request.getData());
                 ProjectRequest projectRequest = mapper.readValue(data, ProjectRequest.class);
-                return ResponseBody.builder().msg("Project created successfully").data(projectService.newProject(authentication, projectRequest)).build();
+                return ResponseBody.builder().msg("Project Creation").data(projectService.newProject(authentication, projectRequest)).build();
 
             case UPDATE:
                 // Update logic

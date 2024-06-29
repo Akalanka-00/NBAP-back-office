@@ -2,6 +2,7 @@ package com.nexusbit.apiportal.controller;
 
 import com.nexusbit.apiportal.dto.user.UserRequest;
 import com.nexusbit.apiportal.service.UserService;
+import com.nexusbit.apiportal.utils.LoggerService;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.Date;
 public class UserController {
 
     private final UserService userService;
+    private static final LoggerService logger = new LoggerService();
 
     @PostConstruct
     public void init(){

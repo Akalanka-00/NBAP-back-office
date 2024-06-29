@@ -19,6 +19,10 @@ public class LoggerService {
         logWithMethodDetails("WARN", message);
     }
 
+    public void trace(String message) {
+        logWithMethodDetails("TRACE", message);
+    }
+
     public void error(String message) {
         logWithMethodDetails("ERROR", message);
     }
@@ -42,6 +46,10 @@ public class LoggerService {
                 break;
             case "ERROR":
                 logger.error(logMessage);
+                break;
+
+            case "TRACE":
+                logger.trace(logMessage);
                 break;
         }
     }

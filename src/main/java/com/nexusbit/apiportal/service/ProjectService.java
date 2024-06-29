@@ -11,10 +11,9 @@ import com.nexusbit.apiportal.model.nexusModels.ResponseBody;
 import com.nexusbit.apiportal.model.nexusModels.errModel.ErrorData;
 import com.nexusbit.apiportal.repository.*;
 import com.nexusbit.apiportal.utils.FileService;
+import com.nexusbit.apiportal.utils.LoggerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -35,14 +34,21 @@ public class ProjectService {
     private final MediaRepo mediaRepo;
     private final ProjectMediaRepo projectMediaRepo;
     private final UserRepo userRepo;
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static final LoggerService logger = new LoggerService() ;
 
     public ResponseBody newProject(Authentication authentication, ProjectRequest request)  {
-        ResponseBody response = null;
+        ResponseBody response;
         try {
+
+            MediaModel banner = mediaRepo.save(
+                    MediaModel.builder()
+                            .url(fileService.save(request.getBanner(), authentication.getName(), MEDIA_CATEGORY.BANNER  .name()))
+                            .createdAt(new Date())
+                            .build());
+
             ProjectModel project = ProjectModel.builder()
                     .name(request.getName())
-                    .banner(mediaRepo.save(MediaModel.builder().url(fileService.save(request.getBanner(), authentication.getName(), MEDIA_CATEGORY.BANNER  .name())).createdAt(new Date()).build()))
+                    .banner(banner)
                     .startDate(request.getStartDate())
                     .endDate(request.getEndDate())
                     .description(request.getDescription())
@@ -86,35 +92,41 @@ public class ProjectService {
                 logger.trace("Media files saved successfully!. newProject()");
             }
 
-
-            response = ResponseBody.builder().msg("Project creation successful").data(savedProject).build();
+            logger.info("Project Creation Successfully");
+            response = ResponseBody.builder().msg("Project creation successful").data(mapToResponse(savedProject)).build();
 
 
         }catch (Exception e){
             logger.error("Project save failed!. "+e.getMessage()+" newProject()");
-            response = ResponseBody.builder().msg("Error Occurred").data(ErrorData.builder().ERR_MSG(e.getMessage()).ERR_CODE(HttpStatus.INTERNAL_SERVER_ERROR)).build();
+            response = ResponseBody.builder()
+                    .msg("Error Occurred")
+                    .data(ErrorData.builder()
+                            .ERR_MSG(e.getMessage())
+                            .ERR_CODE(HttpStatus.INTERNAL_SERVER_ERROR).build())
+                    .build();
 
 
 
         }
-
         return response;
     }
 
-    public ResponseEntity<?> retrieveProjects(Authentication authentication){
-        ResponseEntity<?> response = null;
+    public ResponseBody retrieveProjects(Authentication authentication){
+        ResponseBody response = ResponseBody.builder().build();
         try {
 
             List<ProjectModel> projects = projectRepo.retrieveProjects(authentication.getName());
             List<ProjectResponse> responses = projects.stream().map(this::mapToResponse).toList();
 
-            logger.trace("Projects retrieved successfully!. retrieveProjects()");
-            response = ResponseEntity.status(200).body(responses);
+            logger.info("Projects retrieved successfully");
+            response.setMsg("Projects retrieved successfully");
+            response.setData(responses);
 
         }catch (Exception e){
-            logger.error("Project save failed!. "+e.getMessage()+" newProject()");
-            response = ResponseEntity.status(500).body(e.getMessage());
-        }
+            logger.error("Project save failed!. "+e.getMessage());
+            ErrorData error = ErrorData.builder().ERR_MSG("Project save failed!. "+e.getMessage()).ERR_CODE(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            response.setMsg("Project save failed!. "+e.getMessage());
+            response.setData(error);        }
         return response;
     }
 

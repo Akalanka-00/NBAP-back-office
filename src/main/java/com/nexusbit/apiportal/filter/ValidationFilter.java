@@ -1,19 +1,12 @@
 package com.nexusbit.apiportal.filter;
 
 import com.nexusbit.apiportal.constants.enums.USER_TYPES;
-import com.nexusbit.apiportal.dto.ErrorResponse;
-import com.nexusbit.apiportal.repository.UserRepo;
-import com.nexusbit.apiportal.service.UserService;
+import com.nexusbit.apiportal.utils.LoggerService;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
+
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
@@ -29,7 +22,7 @@ public class ValidationFilter implements Filter {
 
     public static final String AUTHENTICATION_SCHEME_BASIC = "Basic";
     private final Charset credentialsCharset = StandardCharsets.UTF_8;
-    private static final Logger logger = LoggerFactory.getLogger(ValidationFilter.class);
+    private static final LoggerService logger = new LoggerService();
 
 
     @Override
@@ -58,19 +51,19 @@ public class ValidationFilter implements Filter {
 
                     if (delim == -1) {
                         res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                        logger.error("Invalid basic authentication token!. userValidation()");
+                        logger.error("Invalid basic authentication token");
                         return;
                     }
                     String email = token.substring(0, delim);
                     if (email.toLowerCase().contains("test")) {
                         res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                        logger.error("User login failed!. userValidation()");
+                        logger.error("User login failed");
                         return;
                     }
 
                     if (roleDelim == -1) {
                         res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                        logger.error("Invalid role authentication token!. userValidation()");
+                        logger.error("Invalid role authentication token");
                         return;
 
                     }
@@ -80,21 +73,21 @@ public class ValidationFilter implements Filter {
                     if(expDateStrValue.equals("none")){
                         if(roleName.equals(USER_TYPES.premium.name())){
                             res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                            logger.error("Role expired!. userValidation()");
+                            logger.error("Role expired!");
                             return;
                         }
                     }else{
                         Date expDate = new Date(Long.parseLong(expDateStrValue));
                         if(expDate.before(new Date()) && roleName.equals(USER_TYPES.premium.name())) {
                             res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                            logger.error("Role expired!. userValidation()");
+                            logger.error("Role expired");
                             return;
                         }
                     }
 
                 } catch (IllegalArgumentException e) {
                     res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    logger.error("Failed to decode basic authentication token!."+e.getMessage()+" userValidation()");
+                    logger.error("Failed to decode basic authentication token!."+e.getMessage());
                     return;
 
                 }

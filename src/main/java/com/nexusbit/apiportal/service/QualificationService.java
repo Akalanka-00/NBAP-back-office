@@ -9,10 +9,9 @@ import com.nexusbit.apiportal.model.ExpModel;
 import com.nexusbit.apiportal.repository.EducationRepo;
 import com.nexusbit.apiportal.repository.ExpRepo;
 import com.nexusbit.apiportal.repository.UserRepo;
+import com.nexusbit.apiportal.utils.LoggerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,7 @@ public class QualificationService {
     private final ExpRepo expRepo;
     private final UserRepo userRepo;
 
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static final LoggerService logger = new LoggerService() ;
 
     public ResponseEntity<?> setExp(Authentication authentication, ExpRequest request){
         ResponseEntity<?> response = null;

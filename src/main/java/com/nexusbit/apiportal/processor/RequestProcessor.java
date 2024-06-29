@@ -1,37 +1,37 @@
 package com.nexusbit.apiportal.processor;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nexusbit.apiportal.constants.enums.request.AUTHENTICATION_MSG_TYPE;
 import com.nexusbit.apiportal.constants.enums.request.PROJECT_MSG_TYPE;
 import com.nexusbit.apiportal.constants.enums.request.REQUEST_GROUP;
-import com.nexusbit.apiportal.dto.project.ProjectRequest;
-import com.nexusbit.apiportal.dto.user.UserRequest;
 import com.nexusbit.apiportal.model.nexusModels.*;
 import com.nexusbit.apiportal.model.nexusModels.errModel.ErrorData;
-import com.nexusbit.apiportal.service.ProjectService;
-import com.nexusbit.apiportal.service.UserService;
+import com.nexusbit.apiportal.processor.subProcessors.ProjectProcessor;
+import com.nexusbit.apiportal.utils.LoggerService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-public class PortalRequestProcessor{
+public class RequestProcessor {
 
-    private  final UserService userService;
-    private final ProjectService projectService;
+    private static final  LoggerService logger = new LoggerService();
+    private final ProjectProcessor projectProcessor;
+    private final ObjectMapper mapper;
 
-    public ResponseModel  processSecureRequest(Authentication authentication, String json) throws IOException {
+    public Response processSecureRequest(Authentication authentication, HttpServletRequest servletRequest, String json) throws IOException {
 
-        ObjectMapper mapper = new ObjectMapper();
-        RequestModel request = mapper.readValue(json, RequestModel.class);
+        Request request = mapper.readValue(json, Request.class);
         RequestHeader header = request.getHeader();
         REQUEST_GROUP MSG_GRP = REQUEST_GROUP.values()[header.getMSG_GRP()];
+        String clientIp = servletRequest.getRemoteAddr();
         ResponseHeader responseHeader = ResponseHeader.builder()
                 .CL_IP(header.getCL_IP())
                 .VERSION(header.getVERSION())
@@ -39,74 +39,37 @@ public class PortalRequestProcessor{
                 .MSG_TYP(header.getMSG_TYP()+1000)
                 .build();
 
-        ResponseModel notFoundResponse = ResponseModel.builder()
+        Response notFoundResponse = Response.builder()
                 .header(responseHeader)
-                .body(
-                        ResponseBody.builder()
-                                .msg("Not Found")
-                                .data(ErrorData.builder()
-                                        .ERR_CODE(HttpStatus.NOT_FOUND)
-                                        .ERR_MSG("Request not found")
-                                        .build())
-                                .build()
-                )
                 .build();
 
 
-        ResponseModel response = ResponseModel.builder().header(responseHeader).build();
+        Response response = Response.builder().header(responseHeader).data(null).build();
+
+        if(!Objects.equals(clientIp, header.getCL_IP())){
+            response.setData(
+                    ResponseBody.builder()
+                            .msg("Invalid User Found")
+                            .data(ErrorData.builder()
+                                    .ERR_CODE(HttpStatus.UNAUTHORIZED)
+                                    .ERR_MSG("Invalid User")
+                                    .build())
+                            .build()
+            );
+            return response;
+        }
 
         switch (MSG_GRP) {
             case AUTHENTICATION:
                 AUTHENTICATION_MSG_TYPE MSG_TYP = AUTHENTICATION_MSG_TYPE.values()[header.getMSG_TYP()];
-                switch (MSG_TYP) {
-                    case LOGIN:
-                        // Login logic
-                        break;
-                    case REGISTER:
-                        // Register logic
-                        break;
-                    case RESET:
-                        // Reset logic
-                        break;
-                    case LOGOUT:
-                        // Logout logic
-                        break;
-                    default:
-                        return notFoundResponse;
-                }
+                break;
 
-                break;
             case PROJECT:
+                logger.info("Processing project request");
                 PROJECT_MSG_TYPE projectMsgType = PROJECT_MSG_TYPE.values()[header.getMSG_TYP()];
-                switch (projectMsgType) {
-                    case CREATE:
-                        // Create logic
-                        String data = mapper.writeValueAsString(request.getData());
-                        ProjectRequest projectRequest = mapper.readValue(data, ProjectRequest.class);
-                         response.setBody(projectService.newProject(authentication, projectRequest));
-                         return response;
-                    case UPDATE:
-                        // Update logic
-                        break;
-                    case DELETE:
-                        // Delete logic
-                        break;
-                    case VIEW_ALL_ON_PORTAL:
-                        // View all on portal logic
-                        break;
-                    case VIEW_ON_PORTAL:
-                        // View on portal logic
-                        break;
-                    case VIEW_ALL_ON_API:
-                        // View all on api logic
-                        break;
-                    case VIEW_ON_API:
-                        // View on api logic
-                        break;
-                    default:
-                        return notFoundResponse;
-                }
-                break;
+                response.setData(projectProcessor.process(projectMsgType, request, authentication));
+                return response;
+
             case QUALIFICATION:
                 // Qualification logic
                 break;
@@ -118,10 +81,9 @@ public class PortalRequestProcessor{
 
     }
 
-    public ResponseModel  processPublicRequest(Authentication authentication, String json) throws JsonProcessingException {
+    public Response processPublicRequest(Authentication authentication, String json) throws JsonProcessingException {
 
-        ObjectMapper mapper = new ObjectMapper();
-        RequestModel request = mapper.readValue(json, RequestModel.class);
+        Request request = mapper.readValue(json, Request.class);
         RequestHeader header = request.getHeader();
         REQUEST_GROUP MSG_GRP = REQUEST_GROUP.values()[header.getMSG_GRP()];
         ResponseHeader responseHeader = ResponseHeader.builder()
@@ -131,9 +93,9 @@ public class PortalRequestProcessor{
                 .MSG_TYP(header.getMSG_TYP()+1000)
                 .build();
 
-        ResponseModel notFoundResponse = ResponseModel.builder()
+        Response notFoundResponse = Response.builder()
                 .header(responseHeader)
-                .body(
+                .data(
                         ResponseBody.builder()
                                 .msg("Not Found")
                                 .data(ErrorData.builder()
@@ -145,7 +107,7 @@ public class PortalRequestProcessor{
                 .build();
 
 
-        ResponseModel response = ResponseModel.builder().header(responseHeader).build();
+        Response response = Response.builder().header(responseHeader).build();
         String jsonData = mapper.writeValueAsString(request.getData());
 
         switch (MSG_GRP) {

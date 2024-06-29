@@ -10,7 +10,6 @@ import com.nexusbit.apiportal.utils.firebase.FirebaseService;
 import com.nexusbit.apiportal.utils.firebase.Properties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.io.ClassPathResource;
@@ -18,8 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Base64;
@@ -31,15 +28,15 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FileService implements FirebaseService {
 
-    private  final Properties properties;
     public String base64ToUrl(String file){
         return file;
     }
 
+    private  final Properties properties;
+    private static final LoggerService logger = new LoggerService();
+
     @EventListener
     public void init(ApplicationReadyEvent event) {
-
-        // initialize Firebase
 
         try {
 
@@ -54,7 +51,7 @@ public class FileService implements FirebaseService {
 
         } catch (Exception ex) {
 
-            ex.printStackTrace();
+           logger.error("Error initializing firebase "+ ex.getMessage());
 
         }
     }
@@ -103,13 +100,13 @@ public class FileService implements FirebaseService {
         Bucket bucket = StorageClient.getInstance().bucket();
 
         if (StringUtils.isEmpty(name)) {
-            throw new IOException("invalid file name");
+            logger.error("file name is empty");
         }
 
         Blob blob = bucket.get(name);
 
         if (blob == null) {
-            throw new IOException("file not found");
+           logger.error("file not found");
         }
 
         blob.delete();

@@ -1,33 +1,33 @@
 package com.nexusbit.apiportal.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nexusbit.apiportal.model.nexusModels.RequestModel;
-import com.nexusbit.apiportal.model.nexusModels.ResponseModel;
-import com.nexusbit.apiportal.processor.PortalRequestProcessor;
+import com.nexusbit.apiportal.model.nexusModels.Response;
+import com.nexusbit.apiportal.processor.RequestProcessor;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.query.Procedure;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
-public class NexusController <T>{
+public class NexusController {
 
-    private final PortalRequestProcessor portalRequestProcessor;
+    private final RequestProcessor portalRequestProcessor;
 
     @PostMapping("/secure")
-    public ResponseModel secureRequest(Authentication authentication, @RequestBody String data) throws IOException {
-        return portalRequestProcessor.processSecureRequest(authentication, data);
+    @ResponseStatus(HttpStatus.CREATED)
+    public Response secureRequest(Authentication authentication, HttpServletRequest request, @RequestBody String data) throws IOException {
+        return portalRequestProcessor.processSecureRequest(authentication, request, data);
     }
 
     @PostMapping("/public")
-    public ResponseModel publicRequest(Authentication authentication, @RequestBody String data) throws JsonProcessingException {
+    @ResponseStatus(HttpStatus.CREATED)
+    public Response publicRequest(Authentication authentication, @RequestBody String data) throws JsonProcessingException {
         return portalRequestProcessor.processPublicRequest(authentication, data);
     }
 

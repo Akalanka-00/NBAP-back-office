@@ -7,12 +7,10 @@ import com.nexusbit.apiportal.dto.user.UserRequest;
 import com.nexusbit.apiportal.dto.user.UserResponse;
 import com.nexusbit.apiportal.model.RoleModel;
 import com.nexusbit.apiportal.model.UserModel;
-import com.nexusbit.apiportal.model.nexusModels.ResponseBody;
 import com.nexusbit.apiportal.repository.UserRepo;
+import com.nexusbit.apiportal.utils.LoggerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -28,7 +26,7 @@ public class UserService {
 
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private static final LoggerService logger = new LoggerService();
 
 
     public ResponseEntity<?> registerUser(UserRequest request) {
