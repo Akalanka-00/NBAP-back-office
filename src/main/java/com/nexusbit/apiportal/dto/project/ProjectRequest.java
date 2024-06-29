@@ -1,5 +1,6 @@
 package com.nexusbit.apiportal.dto.project;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nexusbit.apiportal.model.MediaModel;
 import com.nexusbit.apiportal.model.ReferenceUrlsModel;
 import jakarta.persistence.JoinColumn;

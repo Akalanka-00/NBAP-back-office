@@ -1,24 +1,15 @@
 package com.nexusbit.apiportal.filter;
 
 import com.nexusbit.apiportal.constants.consts.SecurityConstants;
-import com.nexusbit.apiportal.model.UserModel;
-import com.nexusbit.apiportal.repository.UserRepo;
-import com.nexusbit.apiportal.service.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Filter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.crypto.SecretKey;
@@ -50,7 +41,7 @@ public class JwtTokenGeneratorFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        List<String> paths = List.of( "/auth/user/register");
+        List<String> paths = List.of( "/auth/user/register", "/secure", "/utils/ipCheck");
         for( String path : paths){
             if(request.getServletPath().equals(path)){
                 return true;
